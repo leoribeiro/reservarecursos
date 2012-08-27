@@ -61,20 +61,28 @@ unset(Yii::app()->session['dadosReservas']);
 	<div class="row">
 		<?php echo CHtml::label('Tipo de recurso','TipoRecurso'); ?>
 		<?php
-		   	$criteria = new CDbCriteria;
+		   	$rec = 0;
+			if(!empty($model->RRRecurso_CDRecurso)){
+				$criteria = new CDbCriteria;
+				$criteria->order = 'NMTipoRecurso';
+				$criteriaRR = new CDbCriteria;
+				$criteriaRR->compare('CDRecurso',$model->RRRecurso_CDRecurso);
+				$resultadoRR = RR_Recurso::model()->find($criteriaRR);
+				$criteria->compare('CDTipoRecurso',$resultadoRR->TipoRecurso_CDTipoRecurso);
+				$resultado = RR_TipoRecurso::model()->find($criteria);
+				$rec = $resultado->CDTipoRecurso;
+			}
+			
+			$criteria = new CDbCriteria;
 			$criteria->order = 'NMTipoRecurso';
-			// if(!empty($model->RRRecurso_CDRecurso)){
-			// 	$criteriaRR = new CDbCriteria;
-			// 	$criteriaRR->compare('CDRecurso',$model->RRRecurso_CDRecurso);
-			// 	$resultadoRR = RR_Recurso::model()->find($criteriaRR);
-			// 	$criteria->compare('CDTipoRecurso',$resultadoRR->TipoRecurso_CDTipoRecurso);
-			// }
-			$resultado = RR_TipoRecurso::model()->findAll($criteria);
+			$resultado = RR_TipoRecurso::model()->findAll($criteria);	
+			
 			$listaTipoRecurso = CHtml::listData($resultado, 'CDTipoRecurso', 'NMTipoRecurso');
 		?>
 		<?php echo CHtml::dropDownList('TipoRecurso','',$listaTipoRecurso,
 		array('maxlength'=>20,'style'=>'width:220px',
 		//'empty'=>'Selecione um tipo de recurso',
+		'options' => array($rec=>array('selected'=>true)),
 		'ajax' => array(
 		'type'=>'POST', //request type
 		'url'=>CController::createUrl('RR_ReservaRecurso/JSONAtualizaRecurso'),
@@ -87,7 +95,16 @@ unset(Yii::app()->session['dadosReservas']);
 	<div class="row">
 		<?php echo $form->labelEx($model,'RRRecurso_CDRecurso'); ?>
 		<?php 
-		$listaRecurso = array();
+		if(!empty($model->RRRecurso_CDRecurso)){
+			$criteriaRR = new CDbCriteria;
+			$criteriaRR->compare('TipoRecurso_CDTipoRecurso',$rec);
+			$resultadoRR = RR_Recurso::model()->findAll($criteriaRR);
+			$listaRecurso = CHtml::listData($resultadoRR, 'CDRecurso', 'NMRecurso');
+		}
+		else{
+			$listaRecurso = array();	
+		}
+		
 		echo CHtml::activeDropDownList($model,'RRRecurso_CDRecurso',$listaRecurso,
 		array('style'=>'width:220px',
 		'ajax' => array(
@@ -118,15 +135,9 @@ unset(Yii::app()->session['dadosReservas']);
 		$("#calendario").load("<? echo CController::createUrl('RR_ReservaRecurso/GeraCalendario'); ?>", { 'TipoRecurso' : $('#TipoRecurso').val(), 'Periodo' : $('#Periodo').val() });
 	});	
 	</script>
-	
-	<?php
-		$cs = Yii::app()->getClientScript();  
-		$cs->registerScript(
-		  'funcao-reserva-horario',
-		  'function ReservarHorario(id){
-		   	$("#"+id).html("Reservar");
-		  }',
-		  CClientScript::POS_END
-		);
-	?>
+
+		<?php Yii::app()->clientScript->registerScript('teste',
+		    "$('#RR_ReservaRecurso_RRRecurso_CDRecurso').change();"
+		    ,CClientScript::POS_READY); 
+		?>
 
