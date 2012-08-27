@@ -39,7 +39,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
 		'value'=>'!is_null($data->relServidor) ? ($data->relServidor->NMServidor) : "Administrador"',
 		'type'=>'text',
 		'header'=>'Servidor',
-		'visible'=>'(Yii::app()->user->name == \'admin\')',
+		'visible'=>'(Yii::app()->user->name == "admin")',
 	),
 	array(
 		'name'=>'recursoNMRecurso',
