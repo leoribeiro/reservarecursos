@@ -24,6 +24,8 @@ $('.search-form form').submit(function(){
 )); ?>
 </div><!-- search-form -->
 
+<div id="statusMsg"></div>
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'rr--recurso-grid',
 	'dataProvider'=>$model->search(),
@@ -35,6 +37,7 @@ $('.search-form form').submit(function(){
 		'relTipoHorario.NMHorario',
 		array(
 			'class'=>'CButtonColumn',
+			'afterDelete'=>'function(link,success,data){ if(success) $("#statusMsg").html(data); }',
 		),
 	),
 )); ?>

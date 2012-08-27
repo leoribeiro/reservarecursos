@@ -54,6 +54,10 @@ unset(Yii::app()->session['dadosReservas']);
 			'type'=>'POST', //request type
 			'url'=>CController::createUrl('RR_ReservaRecurso/GeraCalendario'),
 			'update'=>'#calendario',
+			'beforeSend' => 'function(){
+		      $("#divload").addClass("loading");}',
+		     'complete' => 'function(){
+		      $("#divload").removeClass("loading");}',
 			))); ?>
 	</div>
 
@@ -72,6 +76,12 @@ unset(Yii::app()->session['dadosReservas']);
 				$resultado = RR_TipoRecurso::model()->find($criteria);
 				$rec = $resultado->CDTipoRecurso;
 			}
+			else{
+				$criteria = new CDbCriteria;
+				$criteria->order = 'NMTipoRecurso';
+				$resultado = RR_TipoRecurso::model()->find($criteria);
+				$rec = $resultado->CDTipoRecurso;
+			}
 			
 			$criteria = new CDbCriteria;
 			$criteria->order = 'NMTipoRecurso';
@@ -87,6 +97,10 @@ unset(Yii::app()->session['dadosReservas']);
 		'type'=>'POST', //request type
 		'url'=>CController::createUrl('RR_ReservaRecurso/JSONAtualizaRecurso'),
 		'update'=>'#RR_ReservaRecurso_RRRecurso_CDRecurso',
+		'beforeSend' => 'function(){
+	      $("#divload").addClass("loading");}',
+	     'complete' => 'function(){
+	      $("#divload").removeClass("loading");}',
 		))
 		); ?>
 		<?php echo $form->error($model,'HorarioInicio'); ?>
@@ -102,8 +116,12 @@ unset(Yii::app()->session['dadosReservas']);
 			$listaRecurso = CHtml::listData($resultadoRR, 'CDRecurso', 'NMRecurso');
 		}
 		else{
-			$listaRecurso = array();	
+			$criteriaRR = new CDbCriteria;
+			$criteriaRR->compare('TipoRecurso_CDTipoRecurso',$rec);
+			$resultadoRR = RR_Recurso::model()->findAll($criteriaRR);
+			$listaRecurso = CHtml::listData($resultadoRR, 'CDRecurso', 'NMRecurso');	
 		}
+		
 		
 		echo CHtml::activeDropDownList($model,'RRRecurso_CDRecurso',$listaRecurso,
 		array('style'=>'width:220px',
@@ -111,9 +129,16 @@ unset(Yii::app()->session['dadosReservas']);
 		'type'=>'POST', //request type
 		'url'=>CController::createUrl('RR_ReservaRecurso/GeraCalendario'),
 		'update'=>'#calendario',
+		'beforeSend' => 'function(){
+	      $("#divload").addClass("loading");}',
+	     'complete' => 'function(){
+	      $("#divload").removeClass("loading");}',
 		))
-		); ?>
+		); 
+		
+		?>
 		<?php echo $form->error($model,'RRRecurso_CDRecurso'); ?>
+		
 	</div>
 	
 	<div class="row">

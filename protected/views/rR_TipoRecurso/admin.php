@@ -16,6 +16,8 @@ $('.search-form form').submit(function(){
 
 <h1>Tipos de recursos</h1>
 
+<div id="statusMsg"></div>
+
 <? $this->renderPartial('/site/botoes',array('modelo'=>'RR_TipoRecurso','descricao'=>'Tipo de recurso')); ?>
 <div class="search-form" style="display:none">
 <?php $this->renderPartial('_search',array(
@@ -32,6 +34,7 @@ $('.search-form form').submit(function(){
 		'NMTipoRecurso',
 		array(
 			'class'=>'CButtonColumn',
+			'afterDelete'=>'function(link,success,data){ if(success) $("#statusMsg").html(data); }',
 		),
 	),
 )); ?>

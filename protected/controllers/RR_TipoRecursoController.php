@@ -113,10 +113,20 @@ class RR_TipoRecursoController extends Controller
 	{
 		if(Yii::app()->request->isPostRequest)
 		{
-			// we only allow deletion via POST request
-			$this->loadModel()->delete();
+			try {
+				// we only allow deletion via POST request
+				$this->loadModel()->delete();
 
-			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
+				// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
+				// if(!isset($_GET['ajax']))
+				// 	$this->redirect(array('index'));
+				Yii::app()->user->setFlash('deleteStatus','Registro deletado com sucesso.');
+				echo "<div class='flash-success'>Registro deletado com sucesso.</div>";
+		    }
+			catch(CDbException $e){
+			    Yii::app()->user->setFlash('deleteStatus','Este registro está sendo referenciado por algum outro registro. Impossível excluir.');
+			    echo "<div class='flash-error'>Este registro está sendo referenciado por algum outro registro. Impossível excluir.</div>"; //for ajax
+			}
 			if(!isset($_GET['ajax']))
 				$this->redirect(array('index'));
 		}
