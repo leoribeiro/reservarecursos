@@ -63,12 +63,18 @@ unset(Yii::app()->session['dadosReservas']);
 		<?php
 		   	$criteria = new CDbCriteria;
 			$criteria->order = 'NMTipoRecurso';
+			// if(!empty($model->RRRecurso_CDRecurso)){
+			// 	$criteriaRR = new CDbCriteria;
+			// 	$criteriaRR->compare('CDRecurso',$model->RRRecurso_CDRecurso);
+			// 	$resultadoRR = RR_Recurso::model()->find($criteriaRR);
+			// 	$criteria->compare('CDTipoRecurso',$resultadoRR->TipoRecurso_CDTipoRecurso);
+			// }
 			$resultado = RR_TipoRecurso::model()->findAll($criteria);
 			$listaTipoRecurso = CHtml::listData($resultado, 'CDTipoRecurso', 'NMTipoRecurso');
 		?>
 		<?php echo CHtml::dropDownList('TipoRecurso','',$listaTipoRecurso,
 		array('maxlength'=>20,'style'=>'width:220px',
-		'empty'=>'Selecione um tipo de recurso',
+		//'empty'=>'Selecione um tipo de recurso',
 		'ajax' => array(
 		'type'=>'POST', //request type
 		'url'=>CController::createUrl('RR_ReservaRecurso/JSONAtualizaRecurso'),

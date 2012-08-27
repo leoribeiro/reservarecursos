@@ -13,8 +13,10 @@ require_once($yii);
 
 $projetoMarcacao = 'ProjetoMarcacao';
 $projetoRH = 'ProjetoRH';
+$projetoReq = 'ProjetoRequerimentos';
 
 Yii::setPathOfAlias('MarcacaoProva','../'.$projetoMarcacao.'/protected');
 Yii::setPathOfAlias('RecursosHumanos','../'.$projetoRH.'/protected');
+Yii::setPathOfAlias('Requerimentos','../'.$projetoReq.'/protected');
 
 Yii::createWebApplication($config)->run();

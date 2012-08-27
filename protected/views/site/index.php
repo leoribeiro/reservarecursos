@@ -31,6 +31,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
 'id'=>'rr-reserva-recurso-grid',
 'dataProvider'=>$model->search('Atual'),
 'filter'=>$model,
+'afterAjaxUpdate' => 'reinstallDatePicker',
 'columns'=>array(
 	'CDReservaRecurso',
 	array(
@@ -51,6 +52,25 @@ $this->widget('zii.widgets.grid.CGridView', array(
 		'value'=>'$data->Dia',
 		'type'=>'text',
 		'header'=>'Data escolhida',
+		'filter'=>$this->widget('zii.widgets.jui.CJuiDatePicker', array(
+            'model'=>$model,
+            'attribute'=>'Dia',
+            'language'=>'pt-BR',
+			'i18nScriptFile' => 'jquery.ui.datepicker-ja.js', // (#2)
+            'htmlOptions' => array(
+              'id' => 'datepicker_for_due_date',
+              'size' => '10',
+            ),
+			'defaultOptions' => array(  // (#3)
+                'showOn' => 'focus', 
+                'dateFormat' => 'dd/mm/yy',
+                'showOtherMonths' => true,
+                'selectOtherMonths' => true,
+                'changeMonth' => true,
+                'changeYear' => true,
+                'showButtonPanel' => true,
+            )
+       ), true),
 	),
 	array(
 		'name'=>'DataReserva',
@@ -80,5 +100,12 @@ $this->widget('zii.widgets.grid.CGridView', array(
 	),
 ),
 )); 
+
+Yii::app()->clientScript->registerScript('re-install-date-picker', "
+function reinstallDatePicker(id, data) {
+    $('#datepicker_for_due_date').datepicker();
+}
+");
+
 ?>
 

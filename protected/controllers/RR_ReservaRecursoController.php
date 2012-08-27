@@ -36,11 +36,11 @@ class RR_ReservaRecursoController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','JSONAtualizaRecurso','GeraCalendario','adminHistorico','admin'),
+				'actions'=>array('create','update','JSONAtualizaRecurso','GeraCalendario','adminHistorico','admin','delete'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete'),
+				'actions'=>array('admin'),
 				'users'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -94,7 +94,7 @@ class RR_ReservaRecursoController extends Controller
 				$qtdReservas = count($resultado);
 
 				if(($resultadoR->LimiteReserva < ($qtdReservas+$qtdReservasAtuais)) and (Yii::app()->user->name != 'admin')){
-					$this->addError('Dia','Limite de reservas excedido.');
+					$model->addError('Dia','Limite de reservas excedido.');
 				}
 				else{
 					foreach($dadosReservas as $reserva){
@@ -149,7 +149,27 @@ class RR_ReservaRecursoController extends Controller
 		if(Yii::app()->request->isPostRequest)
 		{
 			// we only allow deletion via POST request
-			$this->loadModel()->delete();
+			// não é o ideal....rework...
+			if(!is_null(Yii::app()->user->getModelServidor())){
+				$criteria = new CDbCriteria;
+				$criteria->compare('Servidor_CDServidor',
+				Yii::app()->user->getModelServidor()->CDServidor);
+				$criteria->compare('CDReservaRecurso',$this->loadModel()->CDReservaRecurso);
+				$resultado = RR_ReservaRecurso::model()->find($criteria);
+				if(!is_null($resultado)){
+					$this->loadModel()->delete();
+				}
+				else{
+					throw new CHttpException(400,'Você não pode fazer isso comunista...');
+				}
+				
+				
+			}
+			else{
+				   $this->loadModel()->delete();
+			}
+			
+			
 
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))
@@ -357,6 +377,8 @@ class RR_ReservaRecursoController extends Controller
 				unset(Yii::app()->session['ids_Reserva']);	
 				unset(Yii::app()->session['dadosReservas']);
 			 }
+			
+			Yii::app()->session['idRecurso'] = $dados['idRecurso'];
 			 
 			 
 			

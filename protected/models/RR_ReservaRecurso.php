@@ -48,7 +48,9 @@ class RR_ReservaRecurso extends CActiveRecord
 			array('Dia','type','type'=>'date','dateFormat'=>Yii::app()->locale->dateFormat),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('CDReservaRecurso, Dia, DataReserva, Horario,RRRecurso_CDRecurso', 'safe', 'on'=>'search'),
+			array('CDReservaRecurso, Dia, DataReserva,
+			Horario,RRRecurso_CDRecurso,recursoNMRecurso,
+			horarioNMHorario,servidorNMServidor', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -97,16 +99,30 @@ class RR_ReservaRecurso extends CActiveRecord
 		$criteria->together = true;
 
 		$criteria->compare('CDReservaRecurso',$this->CDReservaRecurso);
+		
+		if($this->Dia != ''){
+			$Data = $this->Dia;
+			$ar = explode('/', $Data);
+			if(count($ar) == 3)
+				$this->Dia = $ar[2].'-'.$ar[1].'-'.$ar[0];
+	    }
 
 		$criteria->compare('Dia',$this->Dia,true);
+		
+		if($this->Dia != ''){
+			$Data= $this->Dia;
+			$ar = explode('-', $Data);
+			if(count($ar) == 3)
+				$this->Dia = $ar[2].'/'.$ar[1].'/'.$ar[0];
+	    }
 
 		$criteria->compare('DataReserva',$this->DataReserva,true);
 
-		$criteria->compare('relHorario.NMHorario',$this->horarioNMHorario);
+		$criteria->compare('relHorario.NMHorario',$this->horarioNMHorario,true);
 		
-		$criteria->compare('relRecurso.NMRecurso',$this->recursoNMRecurso);
+		$criteria->compare('relRecurso.NMRecurso',$this->recursoNMRecurso,true);
 		
-		$criteria->compare('relServidor.NMServidor',$this->servidorNMServidor);
+		$criteria->compare('relServidor.NMServidor',$this->servidorNMServidor,true);
 		
 		if(Yii::app()->user->name != 'admin'){
 			if(!is_null(Yii::app()->user->getModelServidor())){
