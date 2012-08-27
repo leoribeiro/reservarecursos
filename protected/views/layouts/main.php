@@ -174,7 +174,7 @@ else{
 				array('label'=>'Reservar recurso', 'url'=>array('/RR_ReservaRecurso/create'),'visible'=>(!is_null(Yii::app()->user->getModelServidor()))),
 				array('label'=>'Histórico', 'items'=>array(
 						
-						array('label'=>'Histórico de reserva recursos', 
+						array('label'=>'Histórico de reservas', 
 						'url'=>array('/RR_ReservaRecurso/adminHistorico'),'visible'=>(!is_null(Yii::app()->user->getModelServidor()))),
 						
 

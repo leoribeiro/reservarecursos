@@ -88,6 +88,7 @@ class RR_ReservaRecursoController extends Controller
 				if(Yii::app()->user->name != 'admin'){
 					$criteria->compare('Servidor_CDServidor',
 					Yii::app()->user->getModelServidor()->CDServidor);
+					$criteria->compare('RRRecurso_CDRecurso',$model->RRRecurso_CDRecurso);
 				}
 				$criteria->compare('Dia','>='.date('Y-m-d'));
 				$resultado = RR_ReservaRecurso::model()->findAll($criteria);

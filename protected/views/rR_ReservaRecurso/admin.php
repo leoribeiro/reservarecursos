@@ -24,7 +24,7 @@ $('.search-form form').submit(function(){
 	  }
 	?>
 	</div>
-
+<br />
 <div id="statusMsg"></div>
 
 <?php
