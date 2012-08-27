@@ -17,35 +17,29 @@ $('.search-form form').submit(function(){
 	<div class="tituloReq">
 	<?php
 	   if(Yii::app()->user->name == 'admin'){
-		  echo "Recursos reservados";
+		  echo "Histórico de reserva de recursos";
 	  }
 	  else{
-		  echo "Meus recursos reservados";
+		  echo "Histórico de reserva de recursos";
 	  }
 	?>
 	</div>
-
-<div id="statusMsg"></div>
-
 <?php
-if(!is_null($saveSuccess)){
-	echo "<div class='flash-success-req'>";
-	echo "<div style='width: 4%; float: left;height:40px;display:table-cell;padding:5px;vertical-align:middle;'>";
-	echo CHtml::image($this->createUrl('images/accept.png'),'');
-	echo "</div>";
-	echo "<div style='width: 96%; height:40px;display:table-cell;padding:5px;vertical-align:middle;'>";
-	echo "Reserva feita com sucesso.";
-	echo '</div></div>';
-}
 
- 
-	$pageSize=Yii::app()->user->getState('pageSize',Yii::app()->params['defaultPageSize']);
+   $pageSize=Yii::app()->user->getState('pageSize',Yii::app()->params['defaultPageSize']);
+
     $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'rr-reserva-recurso-grid',
-	'dataProvider'=>$model->search('Atual'),
+	'dataProvider'=>$model->search('Historico'),
 	'filter'=>$model,
 	'columns'=>array(
 		'CDReservaRecurso',
+		array(
+			'name'=>'servidorNMServidor',
+			'value'=>'!is_null($data->relServidor) ? ($data->relServidor->NMServidor) : "Administrador"',
+			'type'=>'text',
+			'header'=>'Servidor',
+		),
 		array(
 			'name'=>'recursoNMRecurso',
 			'value'=>'$data->relRecurso->NMRecurso',
@@ -76,6 +70,7 @@ if(!is_null($saveSuccess)){
 			'buttons' => array(
 			'delete' => array(
 			            'label'=>'Excluir reserva',
+						'visible'=>'(Yii::app()->user->name == \'admin\')',
 			)),
 			'header'=>CHtml::dropDownList('pageSize',$pageSize,array(10=>10,20=>20,50=>50,100=>100),
 		      array(

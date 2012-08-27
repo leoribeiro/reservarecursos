@@ -21,14 +21,11 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'HorarioInicio'); ?>
-		<?php echo $form->textField($model,'HorarioInicio'); ?>
+		<?php echo $form->label($model,'Horario'); ?>
+		<?php echo $form->textField($model,'Horario'); ?>
 	</div>
 
-	<div class="row">
-		<?php echo $form->label($model,'HorarioFim'); ?>
-		<?php echo $form->textField($model,'HorarioFim'); ?>
-	</div>
+
 
 	<div class="row buttons">
 		<?php echo CHtml::submitButton('Search'); ?>

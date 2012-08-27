@@ -36,7 +36,7 @@ class RR_ReservaRecursoController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','JSONAtualizaRecurso','GeraCalendario'),
+				'actions'=>array('create','update','JSONAtualizaRecurso','GeraCalendario','adminHistorico','admin'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -73,9 +73,44 @@ class RR_ReservaRecursoController extends Controller
 		if(isset($_POST['RR_ReservaRecurso']))
 		{
 			$model->attributes=$_POST['RR_ReservaRecurso'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->CDReservaRecurso));
-		}
+			
+			if(isset(Yii::app()->session['dadosReservas'])){
+				$dadosReservas = Yii::app()->session['dadosReservas'];
+				
+				$qtdReservasAtuais = count($dadosReservas);
+				
+				// tratar limite máximo de reservas
+				$criteria = new CDbCriteria;
+				$criteria->compare('CDRecurso',$model->RRRecurso_CDRecurso);
+				$resultadoR = RR_Recurso::model()->find($criteria);
+
+				$criteria = new CDbCriteria;
+				if(Yii::app()->user->name != 'admin'){
+					$criteria->compare('Servidor_CDServidor',
+					Yii::app()->user->getModelServidor()->CDServidor);
+				}
+				$criteria->compare('Dia','>='.date('Y-m-d'));
+				$resultado = RR_ReservaRecurso::model()->findAll($criteria);
+				$qtdReservas = count($resultado);
+
+				if(($resultadoR->LimiteReserva < ($qtdReservas+$qtdReservasAtuais)) and (Yii::app()->user->name != 'admin')){
+					$this->addError('Dia','Limite de reservas excedido.');
+				}
+				else{
+					foreach($dadosReservas as $reserva){
+						$modelR=new RR_ReservaRecurso;
+						$modelR->RRRecurso_CDRecurso = $model->RRRecurso_CDRecurso;
+						$modelR->Dia = $reserva[0];
+					    $modelR->Horario = $reserva[1];
+					    $modelR->save();
+					}
+					$this->redirect(array('admin','saveSuccess'=>true));					
+				}
+			}
+			else{
+				$model->addError('Horario','Selecione algum horário disponível.');
+			}	
+		}	
 
 		$this->render('create',array(
 			'model'=>$model,
@@ -144,8 +179,46 @@ class RR_ReservaRecursoController extends Controller
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['RR_ReservaRecurso']))
 			$model->attributes=$_GET['RR_ReservaRecurso'];
+			
+		if(isset($_GET['saveSuccess'])){
+			$saveSuccess = $_GET['saveSuccess'];
+		}
+		else{
+			$saveSuccess = null;
+		}
+		
+		// para tamanho da página selecionada no gridview	
+		if (isset($_GET['pageSize'])) {
+            Yii::app()->user->setState('pageSize',(int)$_GET['pageSize']);
+            unset($_GET['pageSize']);
+		}
 
 		$this->render('admin',array(
+			'model'=>$model,'saveSuccess'=>$saveSuccess,
+		));
+	}
+	
+	public function actionAdminHistorico()
+	{
+		$model=new RR_ReservaRecurso('search');
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['RR_ReservaRecurso']))
+			$model->attributes=$_GET['RR_ReservaRecurso'];
+			
+		if(isset($_GET['saveSuccess'])){
+			$saveSuccess = $_GET['saveSuccess'];
+		}
+		else{
+			$saveSuccess = null;
+		}
+		
+		// para tamanho da página selecionada no gridview	
+		if (isset($_GET['pageSize'])) {
+            Yii::app()->user->setState('pageSize',(int)$_GET['pageSize']);
+            unset($_GET['pageSize']);
+		}
+
+		$this->render('adminHistorico',array(
 			'model'=>$model,
 		));
 	}
@@ -200,72 +273,95 @@ class RR_ReservaRecursoController extends Controller
 	// a manutenção não é fácil
 	public function actionGeraCalendario()
 	{
-		    function passPort($data){
-				$dias_semana = array('Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sabádo');
-				$d = mktime(0,0,0,(int)substr($data, 3, 5),(int)substr($data, 0, 2),(int)substr($data, 6, 9));
-				return $dias_semana[date("w", $d)];
-			}
-			
-			function somarDia($data, $quantDias){
-				$d = mktime(0,0,0,(int)substr($data, 3, 5),((int)substr($data, 0, 2))+$quantDias,(int)substr($data, 6, 9));
-				return (date("d/m/Y",$d));
-			}
-			
-			
-		     $DataEscolhida = "22/08/2012";
-		    
-		     if(isset($_POST['RR_ReservaRecurso']['RRRecurso_CDRecurso'])){
-				$idRecurso = $_POST['RR_ReservaRecurso']['RRRecurso_CDRecurso'];
-		     }
-		     else {
-			     exit();
-		     }
-		     $criteria = new CDbCriteria;
-			 $criteria->compare('CDRecurso',$idRecurso);
-			 $resultadoRecurso = RR_Recurso::model()->find($criteria);
-			 
-			 $criteria = new CDbCriteria;
-			 $criteria->with = array('relTipoHorario');
-			 $criteria->compare('relTipoHorario.CDHorario',$resultadoRecurso->TipoHorario_CDHorario);
-			 $Horarios = RR_Horario::model()->findAll($criteria);
-			
-		     
 		
+		      if(isset($_POST['Periodo'])){
+				$Periodo = $_POST['Periodo'];
+		      }
+		      else if(isset($_GET['Periodo'])){
+			    $Periodo = $_GET['Periodo'];
+		      }
 		     
 
+			 if(isset($_POST['RR_ReservaRecurso']['RRRecurso_CDRecurso'])){
+				$idRecurso = $_POST['RR_ReservaRecurso']['RRRecurso_CDRecurso'];
+			 }
+			 else if(isset($_POST['TipoRecurso']) and !empty($_POST['TipoRecurso'])){
 
-			 $tabela  = "<table id=\"calendar\">";
-			 $tabela .= "<tr>";
-			 $tabela .= "<td colspan=9 class=\"month\">";
-			 $tabela .= "Recurso: ".$resultadoRecurso->NMRecurso;			
-			 $tabela .= "</td></tr>";
-			 
-			 // dias da semana
-			 $tabela.= "<tr class=\"daynames\">"; 		
-			 $tabela.= "<td>Horário</td>";
-			 for($x=0;$x<8;$x++){
-				$tabela .= "<td>";
-				$tabela .= passPort(somarDia($DataEscolhida,$x));
-				$tabela .= "<br />";
-				$tabela .= somarDia($DataEscolhida,$x);
-				$tabela .= "</td>";
-			}
-			$tabela .= "</tr>";
-			
-			 foreach($Horarios as $horario){
-				$tabela .= "<tr class=\"weekres\">";
-				$tabela .= "<td>".$horario->NMHorario."</td>";
-				for($x=0;$x<8;$x++){
-					$tabela .= "<td>";
-					$tabela .= 'Disponível';
-					$tabela .= "</td>";
-				}
-				$tabela .= "</tr>";
+			 	 $TipoRecurso = $_POST['TipoRecurso'];
+				 $data=RR_Recurso::model()->find(array('order'=>'NMRecurso',
+				 'condition'=>'TipoRecurso_CDTipoRecurso=:TIPOREC',
+			     'params'=>array(':TIPOREC'=>$TipoRecurso)));
+			     if(is_null($data)){
+				    $idRecurso = NULL;			
+			     }
+			     else{
+				    $idRecurso = $data->CDRecurso;
+			     }  
+			 }
+			 else if(isset($_GET['idRecurso'])){
+				$idRecurso = $_GET['idRecurso'];
+			 }
+			 else{
+				$idRecurso = NULL;
 			 }
 			
-			$tabela .= "</table>";
+			 $criteria = new CDbCriteria;
+			 $criteria->compare('CDRecurso',$idRecurso);
+			 $resultadoRecurso = RR_Recurso::model()->find($criteria);
+
+			 $criteria = new CDbCriteria;
+			 $criteria->with = array('relTipoHorario');
+			 $criteria->compare('relTipoHorario.CDHorario',
+			 $resultadoRecurso->TipoHorario_CDHorario);
+			 $Horarios = RR_Horario::model()->findAll($criteria);
 			
-			echo $tabela;
+			 $dados = array();
+			 $dados['Horarios'] = $Horarios;
+			 $dados['idRecurso'] = $idRecurso;
+			 $dados['Periodo'] = $Periodo;
+			 $dados['resultadoRecurso'] = $resultadoRecurso;
+			 $dados['idsReservados'] = array();
+			 if(isset($_GET['idReservar'])){
+				$idReservar = $_GET['idReservar'];
+				if(!isset(Yii::app()->session['ids_Reserva'])){
+					$idsReserva = array();
+		        }
+		        else{
+			        $idsReserva = Yii::app()->session['ids_Reserva'];
+		        }
+		        if($_GET['opRecurso'] == 0){
+					$idsReserva[] = $idReservar;
+					if(!isset(Yii::app()->session['dadosReservas'])){
+						$dadosReserva = array();
+					}
+					else{
+						$dadosReserva = Yii::app()->session['dadosReservas'];
+					}
+					$dadosReserva[] = array($_GET['dia'],$_GET['horario']);
+					Yii::app()->session['dadosReservas'] = $dadosReserva;
+		        }
+		        else{
+			        $dadosReserva = Yii::app()->session['dadosReservas'];
+			        unset($dadosReserva[array_search($idReservar,$idsReserva)]);
+			        Yii::app()->session['dadosReservas'] = $dadosReserva;
+					
+			        $idsReserva = array_diff($idsReserva, array($idReservar));
+			           
+		        }
+		        
+		        Yii::app()->session['ids_Reserva'] = $idsReserva;
+		        $dados['idsReservados'] = $idsReserva; 
+			 }
+			 else{
+			    //Remove variável de sessão responsável pelo controle da reserva dos recursos
+				unset(Yii::app()->session['ids_Reserva']);	
+				unset(Yii::app()->session['dadosReservas']);
+			 }
+			 
+			 
+			
+			 $this->renderPartial('_calendar', $dados, false, true);
+
 	
 	}
 	

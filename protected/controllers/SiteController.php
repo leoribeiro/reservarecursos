@@ -38,14 +38,26 @@ class SiteController extends Controller
 			$this->redirect(array('Site/login'));	
 		}
 		else{
-			$modelEstatistica = null;				
+			$model = null;
+			if(Yii::app()->user->name == 'admin' or
+			!is_null(Yii::app()->user->getModelServidor())){
+				$model=new RR_ReservaRecurso('search');
+				$model->unsetAttributes();  // clear any default values
+				if(isset($_GET['RR_ReservaRecurso']))
+					$model->attributes=$_GET['RR_ReservaRecurso'];	
+				
+				// para tamanho da página selecionada no gridview	
+				if (isset($_GET['pageSize'])) {
+		            Yii::app()->user->setState('pageSize',(int)$_GET['pageSize']);
+		            unset($_GET['pageSize']);
+				}
+								
 			}
 
 			
-			$this->render('index',array('modelEstatistica'=>''));
-			//$this->renderPartial('Requerimentos/Estatisticas');
-		
-		
+			$this->render('index',array('model'=>$model));
+		}
+	
 	}
 	
 	public function actionAguarde()
@@ -112,65 +124,12 @@ class SiteController extends Controller
 		if(isset($_POST['LoginForm']))
 		{
 			$model->attributes=$_POST['LoginForm'];
-			$model->opSistema = "Requerimentos";
+			$model->opSistema = "ReservaRecursos";
 			// validate user input and redirect to the previous page if valid
 			if($model->validate() && $model->login()){
-				// definir permissões para os usuários de administração
-				// Registro escolar, coordenações, etc...
-				// não é o ideal, é necessário um rework.
-				// mas como o tempo tá escasso vamos lá
-				$permRR = false;
-				$permRT = false;
-				$permRG = false;
-				$permRE = false;
-				$permRF = false;
-
-				if(!is_null(Yii::app()->user->getModelServidor())){
-					$criteria = new CDbCriteria;
-			        $criteria->compare('Servidor_CDServidor',
-			        Yii::app()->user->getModelServidor()->CDServidor);
-			        $modelsMRS =SS_ModeloRequerimentoServidor::model()->findAll($criteria);
-
-					foreach($modelsMRS as $model){
-						switch($model->SS_ModeloRequerimento_CDModeloRequerimento){
-							case 1:
-								$permRR = true;
-								break;
-							case 2:
-								$permRT = true;
-								break;	
-							case 3:
-								$permRG = true;
-								break;	
-							case 4:
-								$permRE = true;
-								break;	
-							case 5:
-								$permRF = true;
-								break;			
-						}
-					}
-				}
-
-				Yii::app()->getSession()->add('permRR', $permRR);
-				Yii::app()->getSession()->add('permRT', $permRT);
-				Yii::app()->getSession()->add('permRG', $permRG);
-				Yii::app()->getSession()->add('permRE', $permRE);
-				Yii::app()->getSession()->add('permRF', $permRF);
 				
 				$this->redirect(Yii::app()->user->returnUrl);
 			}
-				
-				
-			if($model->novoAluno()){
-				$matricula = $model->dadosAluno[0];
-				$nomecompleto = $model->dadosAluno[1];
-				$email = $model->dadosAluno[2];
-				$tipoAluno = $model->dadosAluno[4];
-				$password = $model->dadosAluno[3];
-				$this->redirect(array($tipoAluno.'/create','matricula'=>$matricula,
-				'nomecompleto'=>$nomecompleto,'email'=>$email,'tipoAluno'=>$tipoAluno));
-			}	
 			
 		}
 		

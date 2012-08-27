@@ -12,6 +12,12 @@
  */
 class RR_ReservaRecurso extends CActiveRecord
 {
+	
+	
+	public $recursoNMRecurso;
+	public $horarioNMHorario;
+	public $servidorNMServidor;
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return RR_ReservaRecurso the static model class
@@ -37,8 +43,9 @@ class RR_ReservaRecurso extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('Dia, DataReserva, HorarioInicio, HorarioFim', 'required'),
+			array('Dia, Horario, RRRecurso_CDRecurso', 'required'),
 			array('Horario,RRRecurso_CDRecurso, Servidor_CDServidor', 'numerical', 'integerOnly'=>true),
+			array('Dia','type','type'=>'date','dateFormat'=>Yii::app()->locale->dateFormat),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('CDReservaRecurso, Dia, DataReserva, Horario,RRRecurso_CDRecurso', 'safe', 'on'=>'search'),
@@ -53,7 +60,9 @@ class RR_ReservaRecurso extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'relHorario' => array(self::BELONGS_TO, 'RR_Horario', 'HorarioInicio'),
+			'relHorario' => array(self::BELONGS_TO, 'RR_Horario', 'Horario'),
+			'relRecurso' => array(self::BELONGS_TO, 'RR_Recurso', 'RRRecurso_CDRecurso'),
+			'relServidor' => array(self::BELONGS_TO, 'Servidor', 'Servidor_CDServidor'),
 		);
 	}
 
@@ -79,8 +88,13 @@ class RR_ReservaRecurso extends CActiveRecord
 	{
 		// Warning: Please modify the following code to remove attributes that
 		// should not be searched.
+		$parametros = func_get_args(); 
 
 		$criteria=new CDbCriteria;
+		
+		$criteria->with = array('relHorario','relRecurso','relServidor');
+		
+		$criteria->together = true;
 
 		$criteria->compare('CDReservaRecurso',$this->CDReservaRecurso);
 
@@ -88,11 +102,62 @@ class RR_ReservaRecurso extends CActiveRecord
 
 		$criteria->compare('DataReserva',$this->DataReserva,true);
 
-		$criteria->compare('Horario',$this->Horario);
+		$criteria->compare('relHorario.NMHorario',$this->horarioNMHorario);
+		
+		$criteria->compare('relRecurso.NMRecurso',$this->recursoNMRecurso);
+		
+		$criteria->compare('relServidor.NMServidor',$this->servidorNMServidor);
+		
+		if(Yii::app()->user->name != 'admin'){
+			if(!is_null(Yii::app()->user->getModelServidor())){
+				$CDServidor = Yii::app()->user->getModelServidor()->CDServidor;
+				$criteria->compare('Servidor_CDServidor',$CDServidor);
+			}			
+		}
+		
+		
+		foreach ($parametros as $parametro)
+		{
+			if($parametro == 'Historico')
+				$criteria->compare('Dia','<'.date('Y-m-d'));
+			else if($parametro == 'Atual'){
+				$criteria->compare('Dia','>='.date('Y-m-d'));
+			}
+		}
+		
+		$criteria->order = 'Dia,CDReservaRecurso';
 
 
 		return new CActiveDataProvider('RR_ReservaRecurso', array(
+			'pagination'=>array(
+			      'pageSize'=> Yii::app()->user->getState('pageSize',Yii::app()->params['defaultPageSize']),
+			),
 			'criteria'=>$criteria,
 		));
+	}
+	
+	public function beforeSave() {
+		
+		if(Yii::app()->user->name == 'admin'){
+			$this->Servidor_CDServidor = null;
+		}
+		else{
+			$this->Servidor_CDServidor = Yii::app()->user->getModelServidor()->CDServidor;
+		}
+		
+		if(!isset(Yii::app()->session['dadosReservas'])){
+			$this->addError('RRRecurso_CDRecurso','Selecione algum horário disponível.');
+			return false;
+		}
+		
+		
+		return parent::beforeSave();
+	}
+	
+	public function behaviors()
+	{
+	    return array('datetimeI18NBehavior' => array('class' => 'ext.DateTimeI18NBehavior'),	
+	); 
+
 	}
 }

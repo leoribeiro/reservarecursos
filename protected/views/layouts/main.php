@@ -122,21 +122,7 @@ else{
 
 	$dataextenso .=  $hoje['year'].'.';
 
-	if(!is_null(Yii::app()->user->getModelAluno())){
-		if(isset(Yii::app()->user->getModelAluno()->CDAluno)){
-		   $id = Yii::app()->user->getModelAluno()->CDAluno;	
-		}
-		else{
-		   $id=-1;
-		}
-			
-		$menuReq = 'Meus Requerimentos';
-	}
-	else{
-		$id = 0;
 
-		$menuReq = "Requerimentos";
-	}
 ?>
 
 
@@ -159,11 +145,11 @@ else{
 	<div id="mainmenu">
 		<?php $this->widget('application.extensions.mbmenu.MbMenu',array(
 			'items'=>array(
-				array('label'=>'Home', 'url'=>array('/Site/index'),'visible'=>(!Yii::app()->user->isGuest and $id!=-1)),
+				array('label'=>'Home', 'url'=>array('/Site/index'),'visible'=>(!Yii::app()->user->isGuest)),
 				array('label'=>'Administração', 'items'=>array(
 					
 		            	array('label'=>'Cadastrar recurso', 
-						'url'=>array('/RR_Recurso/admin'),'visible'=>(Yii::app()->user->name == 'admin' or Yii::app()->user->getPermRR() or Yii::app()->user->getPermRT() or Yii::app()->user->getPermRG() or Yii::app()->user->getPermRE() or Yii::app()->user->getPermRF())),
+						'url'=>array('/RR_Recurso/admin'),'visible'=>(Yii::app()->user->name == 'admin')),
 						array('label'=>'Cadastrar tipo de recurso', 
 						'url'=>array('/RR_TipoRecurso/admin'),'visible'=>(Yii::app()->user->name == 'admin')),
 						array('label'=>'Cadastrar horário', 
@@ -175,20 +161,25 @@ else{
 						array('label'=>'Reservar Recurso', 
 						'url'=>array('/RR_ReservaRecurso/create'),'visible'=>(Yii::app()->user->name == 'admin')),
 						
+						array('label'=>'Histórico de reserva recursos', 
+						'url'=>array('/RR_ReservaRecurso/adminHistorico'),'visible'=>(Yii::app()->user->name == 'admin')),
+						
 
 	
-				),'visible'=>(Yii::app()->user->name == 'admin' or Yii::app()->user->getPermRR() or Yii::app()->user->getPermRT() or Yii::app()->user->getPermRG() or Yii::app()->user->getPermRE() or Yii::app()->user->getPermRF())),
+				),'visible'=>(Yii::app()->user->name == 'admin')),
 				
 				
 				// meus dados
 				
-				array('label'=>'Meus dados', 'items'=>array(
-					
-						array('label'=>'Dados do aluno', 
-					    'url'=>array('/aluno/view?id='.$id)),				
-				),'visible'=>(!is_null(Yii::app()->user->getModelAluno()) and $id!=-1)),
-				
-				
+				array('label'=>'Reservar recurso', 'url'=>array('/RR_ReservaRecurso/create'),'visible'=>(!is_null(Yii::app()->user->getModelServidor()))),
+				array('label'=>'Histórico', 'items'=>array(
+						
+						array('label'=>'Histórico de reserva recursos', 
+						'url'=>array('/RR_ReservaRecurso/adminHistorico'),'visible'=>(!is_null(Yii::app()->user->getModelServidor()))),
+						
+
+	
+				),'visible'=>(!is_null(Yii::app()->user->getModelServidor()))),
 
 				array('label'=>'Login', 'url'=>array('/Site/login'), 'visible'=>Yii::app()->user->isGuest),
 				array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/Site/logout'), 'visible'=>!Yii::app()->user->isGuest)

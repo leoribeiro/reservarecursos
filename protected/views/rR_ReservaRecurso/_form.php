@@ -24,7 +24,11 @@ function somarDia($data, $quantDias){
 	return (date("d/m/Y",$d));
 }
 
-?>
+//Remove variável de sessão responsável pelo controle da reserva dos recursos
+unset(Yii::app()->session['ids_Reserva']);
+unset(Yii::app()->session['dadosReservas']);
+
+?> 
 
 	<?php echo $form->errorSummary($model); ?>
 	
@@ -45,7 +49,12 @@ function somarDia($data, $quantDias){
 		
 		?>
 		<?php echo CHtml::dropDownList('Periodo','',$lista,
-		array('maxlength'=>20,'style'=>'width:220px')); ?>
+		array('maxlength'=>20,'style'=>'width:220px',
+			'ajax' => array(
+			'type'=>'POST', //request type
+			'url'=>CController::createUrl('RR_ReservaRecurso/GeraCalendario'),
+			'update'=>'#calendario',
+			))); ?>
 	</div>
 
 
@@ -85,14 +94,33 @@ function somarDia($data, $quantDias){
 	</div>
 	
 	<div class="row">
-	   <div id="calendario"></div>
+	   <div id="divload" style="height: 16px; width: 16px;"></div>
+	   <div id="calendario" align="center"><i>Nenhum recurso selecionado.</i></div>
 	</div>
 
 
 	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Reservar' : 'Reservar'); ?>
+		<?php echo CHtml::submitButton($model->isNewRecord ? 'Reservar recurso' : 'Reservar recurso'); ?>
 	</div>
 
 <?php $this->endWidget(); ?>
 
 </div><!-- form -->
+
+	<script type="text/javascript" language="javascript">
+	$('#TipoRecurso').change(function(){
+		$("#calendario").load("<? echo CController::createUrl('RR_ReservaRecurso/GeraCalendario'); ?>", { 'TipoRecurso' : $('#TipoRecurso').val(), 'Periodo' : $('#Periodo').val() });
+	});	
+	</script>
+	
+	<?php
+		$cs = Yii::app()->getClientScript();  
+		$cs->registerScript(
+		  'funcao-reserva-horario',
+		  'function ReservarHorario(id){
+		   	$("#"+id).html("Reservar");
+		  }',
+		  CClientScript::POS_END
+		);
+	?>
+
