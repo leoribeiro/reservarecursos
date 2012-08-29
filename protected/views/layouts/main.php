@@ -161,7 +161,7 @@ else{
 						array('label'=>'Reservar Recurso', 
 						'url'=>array('/RR_ReservaRecurso/create'),'visible'=>(Yii::app()->user->name == 'admin')),
 						
-						array('label'=>'Histórico de reserva recursos', 
+						array('label'=>'Histórico de reservas', 
 						'url'=>array('/RR_ReservaRecurso/adminHistorico'),'visible'=>(Yii::app()->user->name == 'admin')),
 						
 
