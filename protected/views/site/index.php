@@ -86,7 +86,7 @@ $this->widget('bootstrap.widgets.TbGridView', array(
 		'header'=>'Horário',
 	),
 	array(
-		'class'=>'CButtonColumn',
+		'class'=>'bootstrap.widgets.TbButtonColumn',
 		'template'=>' {delete}',
 		'buttons' => array(
 		'delete' => array(

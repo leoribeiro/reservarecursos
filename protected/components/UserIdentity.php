@@ -43,7 +43,7 @@ class UserIdentity extends CUserIdentity
 
 			if($ds){
 
-				$boolServidor = $controle->autenticaLDAP($ds,'timoteo',
+				$boolServidor = $controle->autenticaLDAP($ds,'servidor',
 				$this->username,$this->password);
 
 
