@@ -76,12 +76,12 @@ unset(Yii::app()->session['dadosReservas']);
 				$resultado = RR_TipoRecurso::model()->find($criteria);
 				$rec = $resultado->CDTipoRecurso;
 			}
-			else{
-				$criteria = new CDbCriteria;
-				$criteria->order = 'NMTipoRecurso';
-				$resultado = RR_TipoRecurso::model()->find($criteria);
-				$rec = $resultado->CDTipoRecurso;
-			}
+			// else{
+			// 	$criteria = new CDbCriteria;
+			// 	$criteria->order = 'NMTipoRecurso';
+			// 	$resultado = RR_TipoRecurso::model()->find($criteria);
+			// 	$rec = $resultado->CDTipoRecurso;
+			// }
 			
 			$criteria = new CDbCriteria;
 			$criteria->order = 'NMTipoRecurso';
