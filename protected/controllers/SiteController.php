@@ -37,7 +37,7 @@ class SiteController extends Controller
 		else{
 			$model = null;
 			if(Yii::app()->user->name == 'admin' or
-			!is_null(Yii::app()->user->getModelServidor())){
+			!is_null(Yii::app()->user->CDServidor)){
 				$model=new RR_ReservaRecurso('search');
 				$model->unsetAttributes();  // clear any default values
 				if(isset($_GET['RR_ReservaRecurso']))

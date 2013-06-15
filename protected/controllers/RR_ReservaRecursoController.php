@@ -87,7 +87,7 @@ class RR_ReservaRecursoController extends Controller
 				$criteria = new CDbCriteria;
 				if(Yii::app()->user->name != 'admin'){
 					$criteria->compare('Servidor_CDServidor',
-					Yii::app()->user->getModelServidor()->CDServidor);
+					Yii::app()->user->CDServidor);
 					$criteria->compare('RRRecurso_CDRecurso',$model->RRRecurso_CDRecurso);
 				}
 				$criteria->compare('Dia','>='.date('Y-m-d'));
@@ -151,10 +151,10 @@ class RR_ReservaRecursoController extends Controller
 		{
 			// we only allow deletion via POST request
 			// não é o ideal....rework...
-			if(!is_null(Yii::app()->user->getModelServidor())){
+			if(!is_null(Yii::app()->user->CDServidor)){
 				$criteria = new CDbCriteria;
 				$criteria->compare('Servidor_CDServidor',
-				Yii::app()->user->getModelServidor()->CDServidor);
+				Yii::app()->user->CDServidor);
 				$criteria->compare('CDReservaRecurso',$this->loadModel()->CDReservaRecurso);
 				$resultado = RR_ReservaRecurso::model()->find($criteria);
 				if(!is_null($resultado)){
