@@ -91,7 +91,7 @@ unset(Yii::app()->session['dadosReservas']);
 		?>
 		<?php echo CHtml::dropDownList('TipoRecurso','',$listaTipoRecurso,
 		array('maxlength'=>20,'style'=>'width:220px',
-		//'empty'=>'Selecione um tipo de recurso',
+		'empty'=>'Selecione',
 		'options' => array($rec=>array('selected'=>true)),
 		'ajax' => array(
 		'type'=>'POST', //request type
@@ -161,8 +161,8 @@ unset(Yii::app()->session['dadosReservas']);
 
 
 
-		<?php Yii::app()->clientScript->registerScript('teste',
-		    "$('#RR_ReservaRecurso_RRRecurso_CDRecurso').change();"
-		    ,CClientScript::POS_READY); 
+		<?php //Yii::app()->clientScript->registerScript('teste',
+		    //"$('#RR_ReservaRecurso_RRRecurso_CDRecurso').change();"
+		    //,CClientScript::POS_READY); 
 		?>
 
