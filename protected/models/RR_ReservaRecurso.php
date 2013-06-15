@@ -158,7 +158,7 @@ class RR_ReservaRecurso extends CActiveRecord
 			$this->Servidor_CDServidor = null;
 		}
 		else{
-			$this->Servidor_CDServidor = Yii::app()->user->getModelServidor()->CDServidor;
+			$this->Servidor_CDServidor = Yii::app()->user->CDServidor;
 		}
 		
 		if(!isset(Yii::app()->session['dadosReservas'])){
