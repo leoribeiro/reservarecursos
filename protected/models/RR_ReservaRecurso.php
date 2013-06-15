@@ -125,8 +125,8 @@ class RR_ReservaRecurso extends CActiveRecord
 		$criteria->compare('relServidor.NMServidor',$this->servidorNMServidor,true);
 		
 		if(Yii::app()->user->name != 'admin'){
-			if(!is_null(Yii::app()->user->getModelServidor())){
-				$CDServidor = Yii::app()->user->getModelServidor()->CDServidor;
+			if(!is_null(Yii::app()->user->CDServidor)){
+				$CDServidor = Yii::app()->user->CDServidor;
 				$criteria->compare('Servidor_CDServidor',$CDServidor);
 			}			
 		}
