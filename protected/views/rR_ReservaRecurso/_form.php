@@ -158,8 +158,11 @@ unset(Yii::app()->session['dadosReservas']);
 <?php $this->endWidget(); ?>
 
 </div><!-- form -->
-
-
+<script>
+$('#TipoRecurso').change(function(){
+	$("#RR_ReservaRecurso_RRRecurso_CDRecurso").change();  });
+});
+</script>
 
 		<?php //Yii::app()->clientScript->registerScript('teste',
 		    //"$('#RR_ReservaRecurso_RRRecurso_CDRecurso').change();"
