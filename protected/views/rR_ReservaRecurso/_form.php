@@ -160,7 +160,7 @@ unset(Yii::app()->session['dadosReservas']);
 </div><!-- form -->
 <script>
 $('#TipoRecurso').change(function(){
-	$("#RR_ReservaRecurso_RRRecurso_CDRecurso").change();  });
+	$("#RR_ReservaRecurso_RRRecurso_CDRecurso").change();
 });
 </script>
 
