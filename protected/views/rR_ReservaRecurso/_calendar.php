@@ -35,32 +35,32 @@ function verificaDisponibilidade($dia, $horario, $recurso){
 	
 }
 
- $tabela  = "<table id=\"calendar\">";
+ $tabela  = "<table id=\"calendar\" class=\"table table-bordered table-striped\">";
  $tabela .= "<tr>";
  $tabela .= "<td colspan=9 class=\"month\">";
- $tabela .= "Recurso: ".$resultadoRecurso->NMRecurso;			
- $tabela .= "</td></tr>";
+ $tabela .= "Recurso: <b>".$resultadoRecurso->NMRecurso;
+ $tabela .= "</b></td></tr>";
  
  // dias da semana
- $tabela.= "<tr class=\"daynames\">"; 		
- $tabela.= "<td>Horário</td>";
+ $tabela.= "<tr class=\"week\">";
+ $tabela.= "<td><div align=\"center\"><b>Horário</b></div></td>";
  $dias = array();
  for($x=0;$x<8;$x++){
-	$tabela .= "<td>";
+	$tabela .= "<td><div align=\"center\"><b>";
 	$tabela .= passPort(somarDia($Periodo,$x));
 	$tabela .= "<br />";
 	$tabela .= somarDia($Periodo,$x);
-	$tabela .= "</td>";
+	$tabela .= "</b></div></td>";
 	$dias[] = somarDia($Periodo,$x);
 }
 $tabela .= "</tr>";
 
  $id = 0;
  foreach($Horarios as $horario){
-	$tabela .= "<tr class=\"weekres\">";
-	$tabela .= "<td>".$horario->NMHorario."</td>";
+	$tabela .= "<tr class=\"week\">";
+	$tabela .= "<td><div align=\"center\">".$horario->NMHorario."</div></td>";
 	for($x=0;$x<8;$x++){
-		$tabela .= "<td>";
+		$tabela .= "<td><div align=\"center\">";
 		$tabela .= "<div id=".$id.">";
 		$hor = substr($horario->NMHorario,0,2);
 		if($dias[$x]==date('d/m/Y') and is_numeric($hor) and $hor<=date('H')){
@@ -98,7 +98,7 @@ $tabela .= "</tr>";
 		}
 		 
 
-		$tabela .= "</div>";
+		$tabela .= "</div></div>";
 		$tabela .= "</td>";
 		$id++;
 	}

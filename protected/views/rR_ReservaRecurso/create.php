@@ -1,6 +1,6 @@
 
 
-<div class="tituloReq">
+<div id="titlePages">
 Reservar recurso
 </div>
 <br />

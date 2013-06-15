@@ -146,20 +146,20 @@ unset(Yii::app()->session['dadosReservas']);
 	   <div id="calendario" align="center"><i>Nenhum recurso selecionado.</i></div>
 	</div>
 
-
-	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Reservar recurso' : 'Reservar recurso'); ?>
+	<div align="center">
+	<?php $this->widget('bootstrap.widgets.TbButton', array(
+		'buttonType'=>'submit',
+		'type'=>'primary',
+		'label'=>$model->isNewRecord ? 'Reservar recurso' : 'Reservar recurso',
+	)); ?>
 	</div>
+
 
 <?php $this->endWidget(); ?>
 
 </div><!-- form -->
 
-	<script type="text/javascript" language="javascript">
-	$('#TipoRecurso').change(function(){
-		$("#calendario").load("<? echo CController::createUrl('RR_ReservaRecurso/GeraCalendario'); ?>", { 'TipoRecurso' : $('#TipoRecurso').val(), 'Periodo' : $('#Periodo').val() });
-	});	
-	</script>
+
 
 		<?php Yii::app()->clientScript->registerScript('teste',
 		    "$('#RR_ReservaRecurso_RRRecurso_CDRecurso').change();"

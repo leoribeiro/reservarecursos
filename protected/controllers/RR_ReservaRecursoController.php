@@ -196,6 +196,11 @@ class RR_ReservaRecursoController extends Controller
 	 */
 	public function actionAdmin()
 	{
+		if(isset($_GET['saveSuccess'])) {
+
+			Yii::app()->user->setFlash('success', 'Reserva feita com sucesso!');
+
+		}
 		$model=new RR_ReservaRecurso('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['RR_ReservaRecurso']))
@@ -378,12 +383,18 @@ class RR_ReservaRecursoController extends Controller
 				unset(Yii::app()->session['ids_Reserva']);	
 				unset(Yii::app()->session['dadosReservas']);
 			 }
-			
+
 			Yii::app()->session['idRecurso'] = $dados['idRecurso'];
-			 
-			 
-			
-			 $this->renderPartial('_calendar', $dados, false, true);
+			$cs = Yii::app()->clientScript;
+			$cs->scriptMap['jquery.js'] = false;
+			$cs->scriptMap['bootstrap.min.css'] = false;
+			$cs->scriptMap['bootstrap.min.js']  = false;
+			$cs->scriptMap['bootstrap.js']  = false;
+			$cs->scriptMap['bootstrap-yii.css'] = false;
+			$cs->scriptMap['jquery.js'] = false;
+			$cs->scriptMap['jquery.min.js'] = false;
+
+			$this->renderPartial('_calendar', $dados, false, true);
 
 	
 	}

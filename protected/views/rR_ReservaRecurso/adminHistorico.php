@@ -14,7 +14,7 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-	<div class="tituloReq">
+	<div id="titlePages">
 	<?php
 	   if(Yii::app()->user->name == 'admin'){
 		  echo "Histórico de reserva de recursos";
@@ -28,13 +28,13 @@ $('.search-form form').submit(function(){
 
    $pageSize=Yii::app()->user->getState('pageSize',Yii::app()->params['defaultPageSize']);
 
-    $this->widget('zii.widgets.grid.CGridView', array(
-	'id'=>'rr-reserva-recurso-grid',
+	$this->widget('bootstrap.widgets.TbGridView', array(
+	'type'=>'striped bordered condensed',
+	'enableSorting' => false,
 	'dataProvider'=>$model->search('Historico'),
 	'filter'=>$model,
 	'afterAjaxUpdate' => 'reinstallDatePicker',
 	'columns'=>array(
-		'CDReservaRecurso',
 		array(
 			'name'=>'servidorNMServidor',
 			'value'=>'!is_null($data->relServidor) ? ($data->relServidor->NMServidor) : "Administrador"',
@@ -85,18 +85,18 @@ $('.search-form form').submit(function(){
 			'header'=>'Horário',
 		),
 		array(
-			'class'=>'CButtonColumn',
+			'class'=>'bootstrap.widgets.TbButtonColumn',
 			'template'=>' {delete}',
 			'buttons' => array(
 			'delete' => array(
 			            'label'=>'Excluir reserva',
 						'visible'=>'(Yii::app()->user->name == \'admin\')',
 			)),
-			'header'=>CHtml::dropDownList('pageSize',$pageSize,array(10=>10,20=>20,50=>50,100=>100),
-		      array(
-		           'onchange'=>"$.fn.yiiGridView.update('rr-reserva-recurso-grid',{ data:{pageSize: $(this).val() }})",
-				   'style'=>' font-size: 12px; padding: 0px;margin-bottom: 0px;',
-		      )),
+			// 'header'=>CHtml::dropDownList('pageSize',$pageSize,array(10=>10,20=>20,50=>50,100=>100),
+		 //      array(
+		 //           'onchange'=>"$.fn.yiiGridView.update('rr-reserva-recurso-grid',{ data:{pageSize: $(this).val() }})",
+			// 	   'style'=>' font-size: 12px; padding: 0px;margin-bottom: 0px;',
+		 //      )),
 		),
 	),
 )); 

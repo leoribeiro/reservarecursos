@@ -15,7 +15,7 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-	<div class="tituloReq">
+	<div id="titlePages">
 	<?php
 	   if(Yii::app()->user->name == 'admin'){
 		  echo "Recursos reservados";
@@ -27,13 +27,14 @@ $('.search-form form').submit(function(){
 	</div>
 <?php
 $pageSize=Yii::app()->user->getState('pageSize',Yii::app()->params['defaultPageSize']);
-$this->widget('zii.widgets.grid.CGridView', array(
+$this->widget('bootstrap.widgets.TbGridView', array(
+'type'=>'striped bordered condensed',
 'id'=>'rr-reserva-recurso-grid',
+'enableSorting' => false,
 'dataProvider'=>$model->search('Atual'),
 'filter'=>$model,
 'afterAjaxUpdate' => 'reinstallDatePicker',
 'columns'=>array(
-	'CDReservaRecurso',
 	array(
 		'name'=>'servidorNMServidor',
 		'value'=>'!is_null($data->relServidor) ? ($data->relServidor->NMServidor) : "Administrador"',
@@ -92,11 +93,11 @@ $this->widget('zii.widgets.grid.CGridView', array(
 		            'label'=>'Excluir reserva',
 					'url'=> 'Yii::app()->createUrl("RR_ReservaRecurso/delete", array("id" => $data->CDReservaRecurso))',
 		)),
-		'header'=>CHtml::dropDownList('pageSize',$pageSize,array(10=>10,20=>20,50=>50,100=>100),
-	      array(
-	           'onchange'=>"$.fn.yiiGridView.update('rr-reserva-recurso-grid',{ data:{pageSize: $(this).val() }})",
-			   'style'=>' font-size: 12px; padding: 0px;margin-bottom: 0px;',
-	      )),
+		// 'header'=>CHtml::dropDownList('pageSize',$pageSize,array(10=>10,20=>20,50=>50,100=>100),
+	 //      array(
+	 //           'onchange'=>"$.fn.yiiGridView.update('rr-reserva-recurso-grid',{ data:{pageSize: $(this).val() }})",
+		// 	   'style'=>' font-size: 12px; padding: 0px;margin-bottom: 0px;',
+	 //      )),
 	),
 ),
 )); 

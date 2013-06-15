@@ -14,16 +14,20 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<h1>Tipos de horário</h1>
+<div id="titlePages">Tipos de horário</div>
 
-<? $this->renderPartial('/site/botoes',array('modelo'=>'RR_TipoHorario','descricao'=>'Tipo de horário')); ?>
-<div class="search-form" style="display:none">
-<?php $this->renderPartial('_search',array(
-	'model'=>$model,
-)); ?>
-</div><!-- search-form -->
+<?php
+$this->widget('bootstrap.widgets.TbButton', array(
+    'label'=>'Novo tipo de horário',
+    'type'=>'primary',
+    'size'=>'',
+    'url'=>$this->createUrl('RR_TipoHorario/create')
+));
 
-<?php $this->widget('zii.widgets.grid.CGridView', array(
+?>
+
+<?php $this->widget('bootstrap.widgets.TbGridView', array(
+'type'=>'striped bordered condensed',
 	'id'=>'rr--tipo-horario-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
@@ -31,7 +35,7 @@ $('.search-form form').submit(function(){
 		'CDHorario',
 		'NMHorario',
 		array(
-			'class'=>'CButtonColumn',
+			'class'=>'bootstrap.widgets.TbButtonColumn',
 		),
 	),
 )); ?>

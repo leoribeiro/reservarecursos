@@ -14,18 +14,22 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<h1>Tipos de recursos</h1>
+<div id="titlePages">Tipos de recursos</div>
 
 <div id="statusMsg"></div>
 
-<? $this->renderPartial('/site/botoes',array('modelo'=>'RR_TipoRecurso','descricao'=>'Tipo de recurso')); ?>
-<div class="search-form" style="display:none">
-<?php $this->renderPartial('_search',array(
-	'model'=>$model,
-)); ?>
-</div><!-- search-form -->
+<?php
+$this->widget('bootstrap.widgets.TbButton', array(
+    'label'=>'Novo tipo de recurso',
+    'type'=>'primary',
+    'size'=>'',
+    'url'=>$this->createUrl('RR_TipoRecurso/create')
+));
 
-<?php $this->widget('zii.widgets.grid.CGridView', array(
+?>
+
+<?php $this->widget('bootstrap.widgets.TbGridView', array(
+'type'=>'striped bordered condensed',
 	'id'=>'rr--tipo-recurso-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
@@ -33,7 +37,7 @@ $('.search-form form').submit(function(){
 		'CDTipoRecurso',
 		'NMTipoRecurso',
 		array(
-			'class'=>'CButtonColumn',
+			'class'=>'bootstrap.widgets.TbButtonColumn',
 			'afterDelete'=>'function(link,success,data){ if(success) $("#statusMsg").html(data); }',
 		),
 	),
