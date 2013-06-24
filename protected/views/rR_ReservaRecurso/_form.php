@@ -50,15 +50,16 @@ unset(Yii::app()->session['dadosReservas']);
 		?>
 		<?php echo CHtml::dropDownList('Periodo','',$lista,
 		array('maxlength'=>20,'style'=>'width:220px',
-			'ajax' => array(
-			'type'=>'POST', //request type
-			'url'=>CController::createUrl('RR_ReservaRecurso/GeraCalendario'),
-			'update'=>'#calendario',
-			'beforeSend' => 'function(){
-		      $("#divload").addClass("loading");}',
-		     'complete' => 'function(){
-		      $("#divload").removeClass("loading");}',
-			))); ?>
+			// 'ajax' => array(
+			// 'type'=>'POST', //request type
+			// 'url'=>CController::createUrl('RR_ReservaRecurso/GeraCalendario'),
+			// 'update'=>'#calendario',
+			// 'beforeSend' => 'function(){
+		 //      $("#divload").addClass("loading");}',
+		 //     'complete' => 'function(){
+		 //      $("#divload").removeClass("loading");}',
+			// )
+		)); ?>
 	</div>
 
 
