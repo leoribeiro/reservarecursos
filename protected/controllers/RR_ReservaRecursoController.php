@@ -300,6 +300,7 @@ class RR_ReservaRecursoController extends Controller
 	public function actionGeraCalendario()
 	{
 		
+		//echo print_r($_POST);exit();
 		      if(isset($_POST['Periodo'])){
 				$Periodo = $_POST['Periodo'];
 		      }

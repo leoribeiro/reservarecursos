@@ -1,7 +1,7 @@
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'rr--reserva-recurso-form',
+	'id'=>'reserva-recurso-form',
 	'enableAjaxValidation'=>false,
 )); 
 
@@ -93,15 +93,8 @@ unset(Yii::app()->session['dadosReservas']);
 		array('maxlength'=>20,'style'=>'width:220px',
 		'empty'=>'Selecione',
 		'options' => array($rec=>array('selected'=>true)),
-		'ajax' => array(
-		'type'=>'POST', //request type
-		'url'=>CController::createUrl('RR_ReservaRecurso/JSONAtualizaRecurso'),
-		'update'=>'#RR_ReservaRecurso_RRRecurso_CDRecurso',
-		'beforeSend' => 'function(){
-	      $("#divload").addClass("loading");}',
-	     'complete' => 'function(){
-	      $("#divload").removeClass("loading");}',
-		))
+		'onchange' => 'atualizaCalendario();',
+		)
 		); ?>
 		<?php echo $form->error($model,'HorarioInicio'); ?>
 	</div>
@@ -125,6 +118,7 @@ unset(Yii::app()->session['dadosReservas']);
 		
 		echo CHtml::activeDropDownList($model,'RRRecurso_CDRecurso',$listaRecurso,
 		array('style'=>'width:220px',
+		'empty'=>'Selecione',
 		'ajax' => array(
 		'type'=>'POST', //request type
 		'url'=>CController::createUrl('RR_ReservaRecurso/GeraCalendario'),
@@ -158,14 +152,30 @@ unset(Yii::app()->session['dadosReservas']);
 <?php $this->endWidget(); ?>
 
 </div><!-- form -->
-<script>
-$('#TipoRecurso').change(function(){
-	$("#RR_ReservaRecurso_RRRecurso_CDRecurso").change();
-});
+<script type="text/javascript">
+function atualizaCalendario(){
+	$("#divload").addClass("loading");
+	$.ajax({
+	  data: $('#reserva-recurso-form').serialize(),
+	  url: "<?php echo $this->createUrl('//RR_ReservaRecurso/JSONAtualizaRecurso'); ?>",
+	  type: 'POST',
+	  async: false,
+	  success: function(response) {
+		$('#RR_ReservaRecurso_RRRecurso_CDRecurso').html(response);
+	  },
+	});
+	$.ajax({
+	  data: $('#reserva-recurso-form').serialize(),
+	  url: "<?php echo $this->createUrl('//RR_ReservaRecurso/GeraCalendario'); ?>",
+	  type: 'POST',
+	  async: false,
+	  success: function(response) {
+		$('#calendario').html(response);
+	  },
+	});
+	$("#divload").removeClass("loading");
+};
 </script>
 
-		<?php //Yii::app()->clientScript->registerScript('teste',
-		    //"$('#RR_ReservaRecurso_RRRecurso_CDRecurso').change();"
-		    //,CClientScript::POS_READY); 
-		?>
+
 
